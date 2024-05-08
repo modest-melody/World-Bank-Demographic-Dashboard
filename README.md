@@ -1,5 +1,7 @@
 # Global Population Demographics Dashboard
 
+[**Click Here for Dashboard**](https://d9n1ei-michael-mcgee.shinyapps.io/Dashboard_Final/) - *Deployed with shinyapps.io*
+
 This project is a `flexdashboard` with `Shiny` implementations that allow the user to navigate through 217 countries and view important demographic data about global populations from 1960 - 2021. All plots are made interactive with `plotly`.
 
 ## Data Sources
