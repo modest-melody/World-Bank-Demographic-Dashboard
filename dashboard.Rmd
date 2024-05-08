@@ -1,0 +1,299 @@
+---
+title: "Global Population Demographics"
+author: "Hover Dashboard Plots/Maps for Plotly Interactivity"
+output:
+  flexdashboard::flex_dashboard:
+    theme:
+      version: 4
+      bg: "#3d3d3d"
+      fg: "#ffffff" # text
+      primary: "#7a7a7a" # Headers
+      navbar-bg: "#3ADAC6" # teal
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+      code_font:
+        google: 
+          family: JetBrains Mono
+          local: false
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(shinyWidgets)
+library(plotly)
+library(tidyverse)
+library(scales)
+library(DT)
+source("Import/Import_V2.R")
+source("Shiny_Plots/Population_Growth_Model_shiny.R")
+source("Shiny_Plots/Age_Distribution_area_shiny.R")
+source("Shiny_Plots/Age_Dependency_line_shiny.R")
+source("Shiny_Plots/Rural_Urban_areaStacked_shiny.R")
+source("Shiny_Plots/Pop_Density_ggplotly_shiny.R")
+```
+
+```{r input_demo, eval = FALSE}
+# Initial defaulted country to load first
+input$countryname <- "United States"
+input$table_rows_selected <- 204
+```
+
+<style>
+
+.navbar-brand {
+  display: grid;
+  margin: auto;
+  padding: 5px;
+}
+
+.navbar-author {
+  margin-left: 0px;
+}
+</style>
+
+
+Country Plots
+================================================================================
+
+
+
+Inputs {data-width=300}
+--------------------------------------------------------------------------------
+
+
+### **Select A Country**
+
+```{r}
+DTOutput("table")
+
+output$table <- renderDT(regions_and_income_dt)
+
+countryname <- function(){
+  regions_and_income[input$table_rows_selected, 1][[1]]
+}
+```
+
+
+
+
+Column {.tabset}
+--------------------------------------------------------------------------------
+
+
+
+### Population Growth Model
+
+```{r Population Growth Model, warning=FALSE}
+renderPlotly(
+  ggplotly(pop_growth_plot_shiny(countryname()), tooltip = "text") %>% 
+    layout(title = list(x = 0.5, y = 1.9,
+                      xref = "paper", yref = "paper",
+                      pad = list(t = 0, b = 140)),
+         margin = list(l = 50, r = 50, t = 120, b = 50),
+         legend = list(x = 0.5, y = -0.15, 
+                       orientation = "h", 
+                       xanchor = "center", 
+                       yanchor = "top",
+                       bgcolor = "#3d3d3d",
+                       bordercolor = "white",
+                       borderwidth = 1,
+                       title = "",
+                       font = list(size = 12,
+                                   color = "white")),
+         annotations = list(list(x = 0.5, y = 1.09, 
+                                 xref = "paper", yref = "paper", 
+                                 text = paste0("<b>",
+                                               countryname(),
+                                               "</b>"),
+                                 showarrow = FALSE,
+                                 font = list(size = 20,
+                                             color = "white")),
+                            list(x = 0.5, y = 1.03, 
+                                 xref = "paper", yref = "paper", 
+                                 text = "<i>Population Growth = Birth Rate - Death Rate + Net Migration</i>",
+                                 showarrow = FALSE,
+                                 font = list(size = 12,
+                                             color = "white"))
+         )
+  )
+)
+
+
+
+```
+
+
+
+### Age Group Distribution
+
+```{r Age Group Distribution, warning=FALSE}
+renderPlotly(
+  ggplotly(age_dist_plot_shiny(countryname()), tooltip = "text") %>%
+  layout(title = list(x = 0.5, y = 1.9,
+                      xref = "paper", yref = "paper",
+                      pad = list(t = 0, b = 140)),
+         margin = list(l = 50, r = 50, t = 120, b = 50),
+         legend = list(x = 0.5, y = -0.15, 
+                       orientation = "h", 
+                       xanchor = "center", 
+                       yanchor = "top",
+                       bgcolor = "#3d3d3d",
+                       bordercolor = "white",
+                       borderwidth = 1,
+                       title = "",
+                       font = list(size = 12,
+                                   color = "white")),
+         annotations = list(list(x = 0.5, y = 1.09, 
+                                 xref = "paper", yref = "paper", 
+                                 text = paste0("<b>",
+                                               countryname(),
+                                               "</b>"),
+                                 showarrow = FALSE,
+                                 font = list(size = 20,
+                                             color = "white")),
+                            list(x = 0.5, y = 1.03, 
+                                 xref = "paper", yref = "paper", 
+                       text = "<i>Dispersion of Dependent Children & Elderly to Working Age Adults</i>",
+                                 showarrow = FALSE,
+                                 font = list(size = 12,
+                                             color = "white"))
+         
+                            
+         )
+  )
+)
+```
+
+
+
+### Age Dependency Rates
+
+```{r Age Dependency Rates, warning=FALSE}
+renderPlotly(
+  ggplotly(age_dep_plot_shiny(countryname()), tooltip = "text") %>% 
+  layout(title = list(x = 0.5, y = 1.9,
+                      xref = "paper", yref = "paper",
+                      pad = list(t = 0, b = 140)),
+         margin = list(l = 50, r = 50, t = 120, b = 50),
+         legend = list(x = 0.5, y = -0.15, 
+                       orientation = "h", 
+                       xanchor = "center", 
+                       yanchor = "top",
+                       bgcolor = "#3d3d3d",
+                       bordercolor = "white",
+                       borderwidth = 1,
+                       title = "",
+                       font = list(size = 12,
+                                   color = "white")),
+         annotations = list(list(x = 0.5, y = 1.09, 
+                                 xref = "paper", yref = "paper", 
+                                 text = paste0("<b>",
+                                               countryname(),
+                                               "</b>"),
+                                 showarrow = FALSE,
+                                 font = list(size = 20,
+                                             color = "white")),
+                            list(x = 0.5, y = 1.03, 
+                                 xref = "paper", yref = "paper", 
+                                 text = "<i>Dependent Age Population / Working Age Population</i>",
+                                 showarrow = FALSE,
+                                 font = list(size = 12,
+                                             color = "white"))
+         
+                            
+         )
+  )
+)
+
+
+
+```
+
+
+### Rural-Urban Divide
+
+```{r Rural-Urban Divide, warning=FALSE}
+renderPlotly(
+  ggplotly(rur_urb_plot_shiny(countryname()), tooltip = "text") %>% 
+  layout(hoverlabel=list(bgcolor="#3d3d3d"),
+         title = list(x = 0.5, y = 1.9,
+                      xref = "paper", yref = "paper",
+                      pad = list(t = 0, b = 140)),
+         margin = list(l = 50, r = 50, t = 120, b = 50),
+         legend = list(x = 0.5, y = -0.15, 
+                       orientation = "h", 
+                       xanchor = "center", 
+                       yanchor = "top",
+                       bgcolor = "#3d3d3d",
+                       bordercolor = "white",
+                       borderwidth = 1,
+                       title = "",
+                       font = list(size = 12,
+                                   color = "white")),
+         annotations = list(list(x = 0.5, y = 1.09, 
+                                 xref = "paper", yref = "paper", 
+                                 text = paste0("<b>",
+                                               countryname(),
+                                               "</b>"),
+                                 showarrow = FALSE,
+                                 font = list(size = 20,
+                                             color = "white")),
+                            list(x = 0.5, y = 1.03, 
+                                 xref = "paper", yref = "paper", 
+                                 text = "<i>Dispersion of Population Living Among Rural/Urban Areas</i>",
+                                 showarrow = FALSE,
+                                 font = list(size = 12,
+                                             color = "white"))
+         
+                            
+         )
+  )
+)
+```
+
+
+
+
+
+World Population Density {data-orientation=columns}
+================================================================================
+
+
+Column {data-width=90%}
+--------------------------------------------------------------------------------
+
+### Yearly Population Density Choropleth {data-width=90%}
+
+```{r}
+renderPlotly(
+  ggplotly(pop_density_map_shiny(input$noui2), tooltip = "text") %>% layout(showlegend = F)
+)
+```
+
+
+
+Column {data-width=10%}
+--------------------------------------------------------------------------------
+
+
+### Select A Year
+
+```{r}
+noUiSliderInput(
+    inputId = "noui2", label = "",
+    min = 1961, max = 2020,
+    value = 2020, margin = 0, step = 1, padding = 0,
+    orientation = "vertical", color = "#7a7a7a",
+    width = "100%", height = "600px",
+    format = wNumbFormat(decimals = 0,
+                mark = NULL,
+                thousand = NULL,
+                prefix = NULL,
+                suffix = NULL,
+                negative = NULL))
+```
+
